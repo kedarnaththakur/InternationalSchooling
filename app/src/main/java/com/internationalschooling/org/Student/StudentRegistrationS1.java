@@ -40,14 +40,16 @@ import java.util.List;
 import java.util.Locale;
 
 public class StudentRegistrationS1 extends AppCompatActivity {
-private Spinner CountrySpinner,GenderSpinner;
+private Spinner CountrySpinner,GenderSpinner,StateSpinner,citySpinner;
     List<String> list;
     ArrayAdapter<String> SpinnerAdapter;
     ArrayAdapter<String> GenderAdapter;
+    ArrayAdapter<String> StateAdapter;
     private EditText editTextbday;
     private ProgressBar progressBar;
     String[] countries,gender;
    private JSONArray result;
+   private JSONArray result1,result2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +59,29 @@ private Spinner CountrySpinner,GenderSpinner;
         GenderSpinner =(Spinner)findViewById(R.id.GenderSpinner);
         editTextbday=(EditText)findViewById(R.id.Birthday);
         progressBar=(ProgressBar)findViewById(R.id.progressBar);
+        StateSpinner=(Spinner)findViewById(R.id.StateSpinner);
+        citySpinner=(Spinner)findViewById(R.id.CitySpinner);
 
-
-        //******************* fetch data by postRequest
+//**************************************************************************************************
+        //**************************************************************************************
+        //**************************************************************************************
+        //**************************************************************************************
+//**************************************************************************************************
+        //*************************************************************************************
+        //************************************************************************************
+        //**************************************************************************************
+//**************************************************************************************************
+        //*************************************************************************************
+        //**************************************************************************************
+        //**************************************************************************************
+//**************************************************************************************************
+        //**************************************************************************************
+        //*************************************************************************************
+        //**
+        //******************* fetch Country by postRequest
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        String URL = "http://192.168.1.139:8080/api/v1/common/masters";
+        String URL = "http://192.168.1.33:8080/api/v1/common/masters";
 
         String jsonBody ="{\n" +
                 "\t\"authentication\":{\n" +
@@ -73,9 +92,7 @@ private Spinner CountrySpinner,GenderSpinner;
                 "\t\t\"requestValue\":\"0\"\n" +
                 "\t}\n" +
                 "}";
-
-
-        final String mRequestBody = jsonBody;
+              final String mRequestBody = jsonBody;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -104,7 +121,8 @@ private Spinner CountrySpinner,GenderSpinner;
 
                     }
                     //set array to adapter and give colour to view
-                    CountrySpinner.setAdapter(new ArrayAdapter<String>(StudentRegistrationS1.this, android.R.layout.simple_spinner_dropdown_item, cs){
+ CountrySpinner.setAdapter(new ArrayAdapter<String>(StudentRegistrationS1.this,
+         android.R.layout.simple_spinner_dropdown_item, cs){
 
                         public View getView(int position, View convertView,
                                             ViewGroup parent) {
@@ -131,29 +149,35 @@ private Spinner CountrySpinner,GenderSpinner;
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         String name =getName(position);
                         String key =getkey(position);
-                        Toast.makeText(StudentRegistrationS1.this,key,Toast.LENGTH_SHORT).show();
-                        fetchcity(name,key);
-
-                    }
+                     //fetch value of states
+                        fetchstate(name,key);
+                       }
                     public void onNothingSelected(AdapterView<?> parent) {
 
                     }
                 });
-
-
-            }
-
-
-            //**********************************************************************************************************
-// *******************************************************************************************************
-// ***************************************************************************************************
-            // METHORD TO FETCH CITY DATA
-
-
-            private void fetchcity(String name, String key) {
+                  }
+//**************************************************************************************************
+            //**************************************************************************************
+            //**************************************************************************************
+            //**************************************************************************************
+//**************************************************************************************************
+            //*************************************************************************************
+            //************************************************************************************
+            //**************************************************************************************
+//**************************************************************************************************
+            //*************************************************************************************
+            //**************************************************************************************
+            //**************************************************************************************
+//**************************************************************************************************
+            //**************************************************************************************
+            //*************************************************************************************
+            //**
+            // METHORD TO FETCH State DATA
+                private void fetchstate(final String name, String key) {
                 RequestQueue requestQueue = Volley.newRequestQueue(StudentRegistrationS1.this);
 
-                String CountryUrl = "http://192.168.1.139:8080/api/v1/common/masters";
+                String CountryUrl = "http://192.168.1.33:8080/api/v1/common/masters";
 
                 // JSONObject jsonBody1 = new JSONObject();
                 //  jsonBody.put("authentication", "firstvalue");
@@ -171,26 +195,210 @@ private Spinner CountrySpinner,GenderSpinner;
 
 
                 final String mRequestBody = jsonBody;
-
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, CountryUrl, new Response.Listener<String>() {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, CountryUrl,
+                    new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         JSONObject obj = null;
 
                         try {
-
+                            ArrayList<String> cs1 = new ArrayList<String>();
                             obj = new JSONObject(response);
+                            String mastersData = obj.getString("mastersData");
+                            JSONObject obj1 = new JSONObject(mastersData);
 
-                            Log.v("TEST",obj.toString());
+                                result1 = obj1.getJSONArray("states");
 
-                        } catch (JSONException e) {
+                            for(int i=0;i<result1.length();i++) {
+                                try {
+                                    //Getting json object
+                                    JSONObject json = result1.getJSONObject(i);
+
+                                    //Adding the name of the student to array list
+                                    cs1.add(json.getString("value"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            StateSpinner.setAdapter(new ArrayAdapter<String>(StudentRegistrationS1.this,
+                                    android.R.layout.simple_spinner_dropdown_item, cs1){
+
+                                public View getView(int position, View convertView,
+                                                    ViewGroup parent) {
+                                    View v = super.getView(position, convertView, parent);
+                                    ((TextView) v).setTextColor(Color.parseColor("#0B1996"));
+                                    return v;
+                                }
+
+
+                                public View getDropDownView(int position, View convertView,
+                                                            ViewGroup parent) {
+                                    View v = super.getDropDownView(position, convertView,
+                                            parent);
+                                    v.setBackgroundColor(Color.parseColor("#0B1996"));
+                                    ((TextView) v).setTextColor(Color.parseColor("#ffffff"));
+                                    return v;
+                                }
+                            });
+                       } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        StateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                String namestate =getStateName(position);
+                                String keystate =getStateKey(position);
+                                 fetchcity(namestate,keystate);
 
+                            }
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
                     }
 
+//**************************************************************************************************
+                        //**************************************************************************************
+                        //**************************************************************************************
+                        //**************************************************************************************
+//**************************************************************************************************
+                        //*************************************************************************************
+                        //************************************************************************************
+                        //**************************************************************************************
+//**************************************************************************************************
+                        //*************************************************************************************
+                        //**************************************************************************************
+                        //**************************************************************************************
+//**************************************************************************************************
+                        //**************************************************************************************
+                        //*************************************************************************************
+                        //**
+                //  METHORD TO FETCH City DATA
 
-                }, new Response.ErrorListener() {
+                private void fetchcity(String namestate, String keystate) {
+                    RequestQueue requestQueue = Volley.newRequestQueue(StudentRegistrationS1.this);
+
+                    String CountryUrl = "http://192.168.1.33:8080/api/v1/common/masters";
+
+                    // JSONObject jsonBody1 = new JSONObject();
+                    //  jsonBody.put("authentication", "firstvalue");
+                    //  jsonBody.put("requestData", "secondobject");
+                    String jsonBody ="{\n" +
+                            "\t\"authentication\":{\n" +
+                            "\t\"hash\":\"sdfsdfsfdsdff\"\n" +
+                            "\t},\n" +
+                            "\t\"requestData\":{\n" +
+                            "\t\t\"requestKey\":\"CITIES-LIST\",\n" +
+                            "\t\t\"requestValue\":\""+keystate+"\"\n" +
+                            "\t}\n" +
+                            "}";
+
+
+                    final String mRequestBody = jsonBody;
+                    StringRequest stringRequest = new StringRequest(Request.Method.POST, CountryUrl,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    JSONObject obj = null;
+
+                                    try {
+                                        ArrayList<String> cs2 = new ArrayList<String>();
+                                        obj = new JSONObject(response);
+                                        String mastersData = obj.getString("mastersData");
+                                        JSONObject obj2 = new JSONObject(mastersData);
+
+                                        result2 = obj2.getJSONArray("cities");
+                                        Log.v("TEST",result2.toString());
+
+                                        for(int i=0;i<result2.length();i++) {
+                                            try {
+                                                //Getting json object
+                                                JSONObject json = result2.getJSONObject(i);
+
+                                                //Adding the name of the student to array list
+                                                cs2.add(json.getString("value"));
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+
+
+                                        }
+                                        citySpinner.setAdapter(new ArrayAdapter<String>(StudentRegistrationS1.this,
+                                                android.R.layout.simple_spinner_dropdown_item, cs2){
+
+                                            public View getView(int position, View convertView,
+                                                                ViewGroup parent) {
+                                                View v = super.getView(position, convertView, parent);
+                                                ((TextView) v).setTextColor(Color.parseColor("#0B1996"));
+                                                return v;
+                                            }
+
+
+                                            public View getDropDownView(int position, View convertView,
+                                                                        ViewGroup parent) {
+                                                View v = super.getDropDownView(position, convertView,
+                                                        parent);
+                                                v.setBackgroundColor(Color.parseColor("#0B1996"));
+                                                ((TextView) v).setTextColor(Color.parseColor("#ffffff"));
+                                                return v;
+                                            }
+                                        });
+                                     //set spinner adapter
+
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                 //onclick
+                                }
+
+
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }) {
+                        @Override
+                        public String getBodyContentType() {
+                            return "application/json; charset=utf-8";
+                        }
+
+                        @Override
+                        public byte[] getBody() throws AuthFailureError {
+                            try {
+                                return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
+                            } catch (UnsupportedEncodingException uee) {
+                                VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
+                                        mRequestBody, "utf-8");
+                                return null;
+                            }
+                        }
+
+                    };
+                    requestQueue.add(stringRequest);
+
+
+
+
+                }
+//*************************************************************************************************************
+//**************************************************************************************************
+                        //**************************************************************************************
+                        //**************************************************************************************
+                        //**************************************************************************************
+//**************************************************************************************************
+                        //*************************************************************************************
+                        //************************************************************************************
+                        //**************************************************************************************
+//**************************************************************************************************
+                        //*************************************************************************************
+                        //**************************************************************************************
+                        //**************************************************************************************
+//**************************************************************************************************
+                        //**************************************************************************************
+                        //*************************************************************************************
+                        //**
+            }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
@@ -206,27 +414,32 @@ private Spinner CountrySpinner,GenderSpinner;
                         try {
                             return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
                         } catch (UnsupportedEncodingException uee) {
-                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
+                                    mRequestBody, "utf-8");
                             return null;
                         }
                     }
 
                 };
-
-                requestQueue.add(stringRequest);
+                    requestQueue.add(stringRequest);
 
             }
-
-
-
-//*************************************************************************************************************
-     //*************************************************************************************************************
-    //***************************************************************************************************************
-     //****************************************************************************************************************
-
-
-
-
+//**************************************************************************************************
+            //**************************************************************************************
+            //**************************************************************************************
+            //**************************************************************************************
+//**************************************************************************************************
+            //*************************************************************************************
+            //************************************************************************************
+            //**************************************************************************************
+//**************************************************************************************************
+            //*************************************************************************************
+            //**************************************************************************************
+            //**************************************************************************************
+//**************************************************************************************************
+            //**************************************************************************************
+            //*************************************************************************************
+            //**
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -243,22 +456,16 @@ private Spinner CountrySpinner,GenderSpinner;
                 try {
                     return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
                 } catch (UnsupportedEncodingException uee) {
-                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
+                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
+                            mRequestBody, "utf-8");
                     return null;
                 }
             }
-
-
-        };
+         };
 
         requestQueue.add(stringRequest);
-
-
-
-
-
         //************************************************************************************
-
+       // set gender Spinner
         gender= getResources().getStringArray(R.array.gender);
         SpinnerAdapter = new ArrayAdapter<String>
                 (this, android.R.layout.simple_spinner_item,gender ){
@@ -286,11 +493,8 @@ private Spinner CountrySpinner,GenderSpinner;
         GenderSpinner.setAdapter(SpinnerAdapter);
 
         //************************************************************************************
-
-
-    }
-
-    public void NextClick(View view) {
+               }
+  public void NextClick(View view) {
         Intent intent = new Intent(this,StudentRegistrationS2.class);
         startActivity(intent);
 
@@ -333,11 +537,7 @@ private Spinner CountrySpinner,GenderSpinner;
 
     }
 
-    public void ClickNext(View view) {
-
-
-
-    }
+    public void ClickNext(View view) {}
     private String getName(int position){
         String name="";
         try {
@@ -357,6 +557,34 @@ private Spinner CountrySpinner,GenderSpinner;
         try {
             //Getting object of given index
             JSONObject json = result.getJSONObject(position);
+
+            //Fetching name from that object
+            key = json.getString("key");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Returning the name
+        return key;
+    }
+    private String getStateName(int position){
+        String name="";
+        try {
+            //Getting object of given index
+            JSONObject json = result1.getJSONObject(position);
+
+            //Fetching name from that object
+            name = json.getString("value");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Returning the name
+        return name;
+    }
+    private String getStateKey(int position){
+        String key="";
+        try {
+            //Getting object of given index
+            JSONObject json = result1.getJSONObject(position);
 
             //Fetching name from that object
             key = json.getString("key");
