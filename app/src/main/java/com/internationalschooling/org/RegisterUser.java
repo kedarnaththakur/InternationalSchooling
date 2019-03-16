@@ -147,11 +147,8 @@ public class RegisterUser extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(RegisterUser.this);
 
-        String CountryUrl = "http://192.168.1.33:8080/api/v1/student/signup/stage-1";
+        String Url = Config.RegisterUrlStage1;
 
-        // JSONObject jsonBody1 = new JSONObject();
-        //  jsonBody.put("authentication", "firstvalue");
-        //  jsonBody.put("requestData", "secondobject");
         String jsonBody ="{\n" +
                 "\"authentication\":{\n" +
                 "\"hash\":\"sladfjlkasldflsaj\",\n" +
@@ -176,7 +173,7 @@ public class RegisterUser extends AppCompatActivity {
 
 
         final String mRequestBody = jsonBody;
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, CountryUrl,
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,Url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

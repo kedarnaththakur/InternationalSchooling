@@ -21,6 +21,10 @@ public class Validations {
     }
 
 
+public static String hashvalue(){
+        return "test";
+}
+
 
 
 

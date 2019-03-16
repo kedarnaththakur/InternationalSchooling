@@ -12,7 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UserAlreadyExist"></activity>
+        <activity android:name=".Student.StudentRegistrationS6"></activity>
+        <activity android:name=".Student.StudentRegistrationS5" />
+        <activity android:name=".Student.StudentRegistrationS4" />
+        <activity android:name=".UserAlreadyExist" />
         <activity android:name=".EmailVarificationConfirm" />
         <activity android:name=".Student.StudentHome" />
         <activity android:name=".Student.StudentRegistrationS3" />

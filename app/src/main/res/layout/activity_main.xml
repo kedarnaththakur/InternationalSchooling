@@ -58,6 +58,7 @@
         <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/email"
             android:hint="Email" />
     </android.support.design.widget.TextInputLayout>
 
@@ -78,6 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="password"
+            android:id="@+id/password"
             android:inputType="textPassword" />
     </android.support.design.widget.TextInputLayout>
 

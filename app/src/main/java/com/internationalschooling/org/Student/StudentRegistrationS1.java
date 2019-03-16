@@ -25,8 +25,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.internationalschooling.org.Config;
+import com.internationalschooling.org.EmailVarificationConfirm;
 import com.internationalschooling.org.MainActivity;
 import com.internationalschooling.org.R;
+import com.internationalschooling.org.RegisterUser;
+import com.internationalschooling.org.UserAlreadyExist;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +44,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class StudentRegistrationS1 extends AppCompatActivity {
-private Spinner CountrySpinner,GenderSpinner,StateSpinner,citySpinner;
+private Spinner CountrySpinner,GenderSpinner,StateSpinner,citySpinner,learningCenter;
     List<String> list;
     ArrayAdapter<String> SpinnerAdapter;
     ArrayAdapter<String> GenderAdapter;
@@ -49,7 +53,7 @@ private Spinner CountrySpinner,GenderSpinner,StateSpinner,citySpinner;
     private ProgressBar progressBar;
     String[] countries,gender;
    private JSONArray result;
-   private JSONArray result1,result2;
+   private JSONArray result1,result2,result3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,8 @@ private Spinner CountrySpinner,GenderSpinner,StateSpinner,citySpinner;
         progressBar=(ProgressBar)findViewById(R.id.progressBar);
         StateSpinner=(Spinner)findViewById(R.id.StateSpinner);
         citySpinner=(Spinner)findViewById(R.id.CitySpinner);
+        learningCenter=(Spinner)findViewById(R.id.LearningCenterSpinner);
+        fetchCountryCenter();
 
 //**************************************************************************************************
         //**************************************************************************************
@@ -81,7 +87,7 @@ private Spinner CountrySpinner,GenderSpinner,StateSpinner,citySpinner;
         //******************* fetch Country by postRequest
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        String URL = "http://192.168.1.33:8080/api/v1/common/masters";
+                    String URL = Config.CountrySpinnerdata;
 
         String jsonBody ="{\n" +
                 "\t\"authentication\":{\n" +
@@ -177,7 +183,7 @@ private Spinner CountrySpinner,GenderSpinner,StateSpinner,citySpinner;
                 private void fetchstate(final String name, String key) {
                 RequestQueue requestQueue = Volley.newRequestQueue(StudentRegistrationS1.this);
 
-                String CountryUrl = "http://192.168.1.33:8080/api/v1/common/masters";
+                String CountryUrl = Config.CountrySpinnerdata;
 
                 // JSONObject jsonBody1 = new JSONObject();
                 //  jsonBody.put("authentication", "firstvalue");
@@ -277,7 +283,7 @@ private Spinner CountrySpinner,GenderSpinner,StateSpinner,citySpinner;
                 private void fetchcity(String namestate, String keystate) {
                     RequestQueue requestQueue = Volley.newRequestQueue(StudentRegistrationS1.this);
 
-                    String CountryUrl = "http://192.168.1.33:8080/api/v1/common/masters";
+                    String CountryUrl = Config.CountrySpinnerdata;
 
                     // JSONObject jsonBody1 = new JSONObject();
                     //  jsonBody.put("authentication", "firstvalue");
@@ -493,8 +499,167 @@ private Spinner CountrySpinner,GenderSpinner,StateSpinner,citySpinner;
         GenderSpinner.setAdapter(SpinnerAdapter);
 
         //************************************************************************************
+        //**************************************************************************************************
+        //*************************************************************************************
+        //************************************************************************************
+        //**************************************************************************************
+//**************************************************************************************************
+        //*************************************************************************************
+        //**************************************************************************************
+        //**************************************************************************************
+//**************************************************************************************************
+        //**************************************************************************************
+        //*************************************************************************************
+        //**
+
+
+
+
+
                }
-  public void NextClick(View view) {
+
+    private void fetchCountryCenter() {
+
+        RequestQueue requestQueue = Volley.newRequestQueue(StudentRegistrationS1.this);
+
+        String Url = Config.CountrySpinnerdata;
+
+        String jsonBody ="{\n" +
+                "\"authentication\":{\n" +
+                "\t\t\t\"hash\":\"sdfsdfsfdsdff\"\n" +
+                "},\n" +
+                "\"requestData\":{\n" +
+                "\t\"requestKey\":\"SCHOOLS-LIST\",\n" +
+                "\t\"requestValue\":\"1\"\n" +
+                "\t\n" +
+                "}\n" +
+                "}";
+
+
+        final String mRequestBody = jsonBody;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,Url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        JSONObject  obj = null;
+                        try {
+                            obj = new JSONObject(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        String master = null;
+                        try {
+                            master = obj.getString("mastersData");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        JSONObject obj1 = null;
+                        try {
+                            obj1 = new JSONObject(master);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            String Schools=obj1.getString("schools");
+                            Log.v("Schools is" ,Schools);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        ArrayList<String> cs2 = new ArrayList<String>();
+
+
+                        try {
+                            result3 = obj1.getJSONArray("schools");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+
+                        for(int i=0;i<result3.length();i++) {
+                            try {
+                                //Getting json object
+                                JSONObject json = result3.getJSONObject(i);
+
+                                //Adding the name of the student to array list
+                                cs2.add(json.getString("value"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                        learningCenter.setAdapter(new ArrayAdapter<String>(StudentRegistrationS1.this,
+                                android.R.layout.simple_spinner_dropdown_item, cs2){
+
+                            public View getView(int position, View convertView,
+                                                ViewGroup parent) {
+                                View v = super.getView(position, convertView, parent);
+                                ((TextView) v).setTextColor(Color.parseColor("#0B1996"));
+                                return v;
+                            }
+
+
+                            public View getDropDownView(int position, View convertView,
+                                                        ViewGroup parent) {
+                                View v = super.getDropDownView(position, convertView,
+                                        parent);
+                                v.setBackgroundColor(Color.parseColor("#0B1996"));
+                                ((TextView) v).setTextColor(Color.parseColor("#ffffff"));
+                                return v;
+                            }
+                        });
+                        //set spinner adapter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    }
+
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s",
+                            mRequestBody, "utf-8");
+                    return null;
+                }
+            }
+
+        };
+        requestQueue.add(stringRequest);
+
+
+    }
+
+    public void NextClick(View view) {
         Intent intent = new Intent(this,StudentRegistrationS2.class);
         startActivity(intent);
 
